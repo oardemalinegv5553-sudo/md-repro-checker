@@ -1,0 +1,5 @@
+# 核心依赖：仅此一个
+pyyaml>=6.0
+
+# 可选：启用 --backend llm 时需要（默认 backend 为 rule，不需要）
+# anthropic>=0.40

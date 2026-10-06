@@ -1,0 +1,461 @@
+{
+  "_note": "arXiv 方法段清单。正文在 sections/，仅本地评估用，不随提交材料分发。",
+  "_license": "各篇版权归原作者；本清单只记录 arXiv ID 与哈希，不含正文。",
+  "n_total": 50,
+  "n_ok": 24,
+  "records": [
+    {
+      "id": "0706.3514v1",
+      "title": "Charge Inversion of Divalent Ionic Solutions in Silica Channels",
+      "published": "2007-06-24",
+      "ok": true,
+      "section": "Simulation details",
+      "level": 1,
+      "chars": 2331,
+      "sha256": "652fa9708fe8583d",
+      "file": "sections/0706.3514v1.txt"
+    },
+    {
+      "id": "0912.0893v1",
+      "title": "Performance Analysis on Molecular Dynamics Simulation of Protein Using GROMACS",
+      "published": "2009-12-04",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "1002.0354v1",
+      "title": "Elucidating the Bimodal Acid-base Behavior of the Water-silica Interface from First Principles",
+      "published": "2010-02-01",
+      "ok": true,
+      "section": "Computational Methods",
+      "level": 1,
+      "chars": 9153,
+      "sha256": "6beb3ae9311efa26",
+      "file": "sections/1002.0354v1.txt"
+    },
+    {
+      "id": "1007.5359v2",
+      "title": "Topological effect on thermal conductivity in graphene",
+      "published": "2010-07-30",
+      "ok": true,
+      "section": "configuration and calculation details",
+      "level": 1,
+      "chars": 7604,
+      "sha256": "c458907dad853a1e",
+      "file": "sections/1007.5359v2.txt"
+    },
+    {
+      "id": "1111.5611v1",
+      "title": "Chirality- and thickness-dependent thermal conductivity of few-layer graphene: a molecular dynamics study",
+      "published": "2011-11-24",
+      "ok": false,
+      "reason": "no \\section commands (cannot locate methods)"
+    },
+    {
+      "id": "1201.6684v3",
+      "title": "On Calculation of Thermal Conductivity from Einstein Relation in Equilibrium MD",
+      "published": "2012-01-31",
+      "ok": false,
+      "reason": "section too short after strip (270 chars)"
+    },
+    {
+      "id": "1208.6331v1",
+      "title": "Computational study of the thermal conductivity in defective carbon nanostructures",
+      "published": "2012-08-30",
+      "ok": true,
+      "section": "Method",
+      "level": 1,
+      "chars": 4665,
+      "sha256": "7a47a4bcac842e34",
+      "file": "sections/1208.6331v1.txt"
+    },
+    {
+      "id": "1407.5885v1",
+      "title": "Significant Reduction of Graphene Thermal Conductivity by Phononic Crystal Structure",
+      "published": "2014-07-22",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "1603.06347v2",
+      "title": "Thermal Conductivity Coefficient from Microscopic Models",
+      "published": "2016-03-21",
+      "ok": true,
+      "section": "Hadronic gas model (EoS)",
+      "level": 1,
+      "chars": 3111,
+      "sha256": "d3b786dc740eb2a9",
+      "file": "sections/1603.06347v2.txt"
+    },
+    {
+      "id": "1702.01910v4",
+      "title": "Development of a Transferable Reactive Force Field of P/H Systems: Application to the Chemical and Mechanical Properties of Phosphorene",
+      "published": "2017-02-07",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "1703.06791v1",
+      "title": "Multiscale modeling of heat conduction in graphene laminates",
+      "published": "2017-03-17",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "1707.05453v1",
+      "title": "Free Energy Calculations of Membrane Permeation: Challenges due to Strong Headgroup-Solute Interactions",
+      "published": "2017-07-18",
+      "ok": true,
+      "section": "Methods",
+      "level": 1,
+      "chars": 9492,
+      "sha256": "6c564d096c465d15",
+      "file": "sections/1707.05453v1.txt"
+    },
+    {
+      "id": "1805.00269v1",
+      "title": "Equivalence of the equilibrium and the nonequilibrium molecular dynamics methods for thermal conductivity calculations: From bulk to nanowire silicon",
+      "published": "2018-05-01",
+      "ok": true,
+      "section": "Models and Methods",
+      "level": 1,
+      "chars": 6481,
+      "sha256": "f35744a411a83576",
+      "file": "sections/1805.00269v1.txt"
+    },
+    {
+      "id": "1808.02978v1",
+      "title": "Graphene Helicoid: The Distinct Properties Promote Application of Graphene Related Materials in Thermal Management",
+      "published": "2018-08-09",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "1812.03256v1",
+      "title": "Development of a New Parameter Optimization Scheme for a Reactive Force Field (ReaxFF) Based on a Machine Learning Approach",
+      "published": "2018-12-08",
+      "ok": true,
+      "section": "Reactive MD simulation on the $ $-Al$_2$O$_3$ surface",
+      "level": 2,
+      "chars": 3853,
+      "sha256": "27c74d9ac25f9fc6",
+      "file": "sections/1812.03256v1.txt"
+    },
+    {
+      "id": "1906.03448v1",
+      "title": "Shear viscosity of pseudo hard-spheres",
+      "published": "2019-06-08",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "1912.00640v1",
+      "title": "Temperature effects on the ionic conductivity in concentrated alkaline electrolyte solutions",
+      "published": "2019-12-02",
+      "ok": false,
+      "reason": "no methods-like section"
+    },
+    {
+      "id": "2001.02541v5",
+      "title": "Nonequilibrium Molecular Dynamics, Fractal Phase-Space Distributions, the Cantor Set, and Puzzles Involving Information Dimensions for Two Compressible Baker Maps",
+      "published": "2020-01-06",
+      "ok": false,
+      "reason": "no methods-like section"
+    },
+    {
+      "id": "2002.12637v1",
+      "title": "Forces from Lipids and Ionic Diffusion: Probing lateral membrane effects by an optimized filter region of voltage dependent K+ channels",
+      "published": "2020-02-28",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2108.03424v1",
+      "title": "Heat transport in long-ranged anharmonic oscillator models",
+      "published": "2021-08-07",
+      "ok": true,
+      "section": "RNEMD simulations",
+      "level": 1,
+      "chars": 9628,
+      "sha256": "ad1aac2b36e8898c",
+      "file": "sections/2108.03424v1.txt"
+    },
+    {
+      "id": "2110.08487v2",
+      "title": "Thermal transport of amorphous carbon and boron-nitride monolayers",
+      "published": "2021-10-16",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2110.08914v2",
+      "title": "Heat-current filtering for Green-Kubo and Helfand-moment molecular dynamics predictions of thermal conductivity: Application to the organic crystal $β$-HMX",
+      "published": "2021-10-17",
+      "ok": true,
+      "section": "Force Field and MD Simulation Details",
+      "level": 2,
+      "chars": 4623,
+      "sha256": "890b4651c705947d",
+      "file": "sections/2110.08914v2.txt"
+    },
+    {
+      "id": "2204.02105v2",
+      "title": "GROMACS Stochastic Dynamics and BAOAB are equivalent configurational sampling algorithms",
+      "published": "2022-04-05",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "2207.10963v1",
+      "title": "Ion-induced transient potential fluctuations facilitate pore formation and cation transport through lipid membranes",
+      "published": "2022-07-22",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2207.13405",
+      "title": "(manual)",
+      "published": "",
+      "ok": true,
+      "section": "Models and Methods",
+      "level": 1,
+      "chars": 5235,
+      "sha256": "2823e6dcd8b74ca3",
+      "file": "sections/2207.13405.txt"
+    },
+    {
+      "id": "2305.03959v2",
+      "title": "Insights into the Structure and Ion Transport of Pectin-[BMIM][PF$_6$] Electrolytes",
+      "published": "2023-05-06",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2312.07027v2",
+      "title": "Effect of shear flow on the transverse thermal conductivity of polymer melts",
+      "published": "2023-12-12",
+      "ok": true,
+      "section": "SIMULATIONS",
+      "level": 1,
+      "chars": 12879,
+      "sha256": "d50724e39cc69dd1",
+      "file": "sections/2312.07027v2.txt"
+    },
+    {
+      "id": "2401.11182v2",
+      "title": "Salt Effects on Ionic Conductivity Mechanisms in Ethylene Carbonate Electrolytes: Interplay of Viscosity and Ion-ion Relaxations",
+      "published": "2024-01-20",
+      "ok": false,
+      "reason": "no \\section commands (cannot locate methods)"
+    },
+    {
+      "id": "2404.14338v1",
+      "title": "Managing Expectations and Imbalanced Training Data in Reactive Force Field Development: an Application to Water Adsorption on Alumina",
+      "published": "2024-04-22",
+      "ok": true,
+      "section": "Methodology",
+      "level": 1,
+      "chars": 22162,
+      "sha256": "b1795c59c284a0ea",
+      "file": "sections/2404.14338v1.txt"
+    },
+    {
+      "id": "2406.10362v1",
+      "title": "A Comparison of the Performance of the Molecular Dynamics Simulation Package GROMACS Implemented in the SYCL and CUDA Programming Models",
+      "published": "2024-06-14",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2409.15478v1",
+      "title": "Martignac: Computational workflows for reproducible, traceable, and composable coarse-grained Martini simulations",
+      "published": "2024-09-23",
+      "ok": true,
+      "section": "Simulation methods",
+      "level": 1,
+      "chars": 1391,
+      "sha256": "4d7b3c7674e65a9c",
+      "file": "sections/2409.15478v1.txt"
+    },
+    {
+      "id": "2505.01141v3",
+      "title": "Tailoring Heat Transfer at Silica-Water Interfaces via Hydroxyl and Methyl Surface Groups",
+      "published": "2025-05-02",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2505.21031v2",
+      "title": "Reactive molecular dynamics approach to PFAS plasma oxidation in water",
+      "published": "2025-05-27",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "2506.04835v1",
+      "title": "Thermoplasmonics of Gold-Core Silica-Shell Colloidal Nanoparticles under Pulse Illumination",
+      "published": "2025-06-05",
+      "ok": true,
+      "section": "Molecular Dynamics Simulations",
+      "level": 2,
+      "chars": 3197,
+      "sha256": "94f1365bbd95de41",
+      "file": "sections/2506.04835v1.txt"
+    },
+    {
+      "id": "2508.02170v2",
+      "title": "Comparative molecular dynamics simulations of charged solid-liquid interfaces with different water models",
+      "published": "2025-08-04",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2509.00937v1",
+      "title": "Parallelizing Drug Discovery: HPC Pipelines for Alzheimer's Molecular Docking and Simulation",
+      "published": "2025-08-31",
+      "ok": true,
+      "section": "Computational Pipeline And HPC Optimization",
+      "level": 2,
+      "chars": 998,
+      "sha256": "9fddf39eaf4b67e6",
+      "file": "sections/2509.00937v1.txt"
+    },
+    {
+      "id": "2509.21527v1",
+      "title": "Redesigning GROMACS Halo Exchange: Improving Strong Scaling with GPU-initiated NVSHMEM",
+      "published": "2025-09-25",
+      "ok": false,
+      "reason": "section too short after strip (141 chars)"
+    },
+    {
+      "id": "2509.24195v1",
+      "title": "Effect of Tube Radius on the Adsorption of Chlorothalonil on Single-Walled Carbon and Boron Nitride Nanotube Surfaces: A Theoretical Study for Environmental Remediation",
+      "published": "2025-09-29",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "2510.06902v1",
+      "title": "GROMACS Unplugged: How Power Capping and Frequency Shapes Performance on GPUs",
+      "published": "2025-10-08",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "2602.11098v1",
+      "title": "Data-Efficient Multidimensional Free Energy Estimation via Physics-Informed Score Learning",
+      "published": "2026-02-11",
+      "ok": true,
+      "section": "Molecular Dynamics Simulations",
+      "level": 2,
+      "chars": 4112,
+      "sha256": "a48f95b6511ebbfa",
+      "file": "sections/2602.11098v1.txt"
+    },
+    {
+      "id": "2602.17595v1",
+      "title": "Discovery of Polymer Electrolytes with Bayesian Optimization and High-Throughput Molecular Dynamics simulations",
+      "published": "2026-02-19",
+      "ok": true,
+      "section": "Methods",
+      "level": 1,
+      "chars": 6862,
+      "sha256": "adb042ebc7fdd00f",
+      "file": "sections/2602.17595v1.txt"
+    },
+    {
+      "id": "2603.28012v1",
+      "title": "A Comparative Study of Molecular Dynamics Approaches for Simulating Ionic Conductivity in Solid Lithium Electrolytes",
+      "published": "2026-03-30",
+      "ok": true,
+      "section": "Ionic Conductivity from Molecular Dynamics Simulations",
+      "level": 2,
+      "chars": 1647,
+      "sha256": "44709c6439cd7b78",
+      "file": "sections/2603.28012v1.txt"
+    },
+    {
+      "id": "2604.01940v3",
+      "title": "A Residence-Time Approach for Determining Position-Dependent Diffusivities from Biased Molecular Simulations",
+      "published": "2026-04-02",
+      "ok": true,
+      "section": "Computational Details",
+      "level": 1,
+      "chars": 10946,
+      "sha256": "b08ae6989ff13111",
+      "file": "sections/2604.01940v3.txt"
+    },
+    {
+      "id": "2605.16123v1",
+      "title": "Thermal conductivity of seifertite and pyrite-type SiO$_2$: A comparative study",
+      "published": "2026-05-15",
+      "ok": true,
+      "section": "Molecular dynamics simulations",
+      "level": 2,
+      "chars": 1149,
+      "sha256": "c9c5f6615a986241",
+      "file": "sections/2605.16123v1.txt"
+    },
+    {
+      "id": "2608.06895v1",
+      "title": "Local Structure Dictates Ionic Transport and Mechanical Properties in Glassy Solid Electrolytes for Lithium Batteries",
+      "published": "2026-08-07",
+      "ok": false,
+      "reason": "NotLatexSource: e-print 是 PDF（作者未提交 LaTeX 源码）"
+    },
+    {
+      "id": "2609.22019v1",
+      "title": "ReaxKit: A Modular Python Toolkit for Preparing, Parsing, and Analyzing ReaxFF Molecular Dynamics Simulations",
+      "published": "2026-09-18",
+      "ok": false,
+      "reason": "URLError: <urlopen error [Errno 2] No such file or directory>"
+    },
+    {
+      "id": "cond-mat/0701254v1",
+      "title": "Transport and Helfand moments in the Lennard-Jones fluid. II. Thermal Conductivity",
+      "published": "2007-01-11",
+      "ok": true,
+      "section": "Helfand-moment method",
+      "level": 1,
+      "chars": 1474,
+      "sha256": "bf4fd1fc0b6c6753",
+      "file": "sections/cond-mat_0701254v1.txt"
+    },
+    {
+      "id": "cond-mat/9803248v1",
+      "title": "A molecular dynamics simulation of water confined in a cylindrical SiO2 pore",
+      "published": "1998-03-20",
+      "ok": false,
+      "reason": "no .tex in e-print"
+    },
+    {
+      "id": "cond-mat/9910397v1",
+      "title": "On the nature of Thermal Diffusion in binary Lennard-Jones liquids",
+      "published": "1999-10-25",
+      "ok": true,
+      "section": "Model System and Simulation Details",
+      "level": 2,
+      "chars": 2269,
+      "sha256": "1ab6c252eacea6ec",
+      "file": "sections/cond-mat_9910397v1.txt"
+    },
+    {
+      "id": "ep",
+      "title": "(cached)",
+      "published": "",
+      "ok": false,
+      "reason": "not an arXiv ID: 'ep'"
+    },
+    {
+      "id": "nlin/0210052v1",
+      "title": "Large-System Phase-Space Dimensionality Loss in Stationary Heat Flows",
+      "published": "2002-10-22",
+      "ok": true,
+      "section": "Lyapunov Exponent Calculations",
+      "level": 1,
+      "chars": 4129,
+      "sha256": "e0fcc3b959c8883f",
+      "file": "sections/nlin_0210052v1.txt"
+    }
+  ]
+}

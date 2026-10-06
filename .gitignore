@@ -1,0 +1,16 @@
+# 生成物
+__pycache__/
+*.pyc
+
+# 临时工作区
+eval/_tmp/
+
+# 受版权保护的论文正文与派生物：既不随包分发，也不进 git 历史。
+# 这一组与 eval/_tmp/desens_scan.py 的 SKIP_DIRS 刻意保持一致，
+# 这样脱敏扫描的范围就等于被跟踪的文件集。
+eval/real/sections/
+eval/real/_label_work/
+eval/real/_scratch/
+
+# run_demo 的可再生输出；持久夹具在 examples/case-01/expected/
+out/

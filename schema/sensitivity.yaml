@@ -1,0 +1,146 @@
+# =============================================================================
+# sensitivity.yaml：参数与结果的敏感性知识层
+# -----------------------------------------------------------------------------
+# md_method.yaml 回答"这个字段是什么、为什么重要"。
+# 本文件回答一个更尖锐的问题："在**这个具体场景下**，它缺失会让结果偏多少？"
+#
+# 这是本 schema 相对通用文献解析工具的真正增量：通用解析器能告诉你
+# "thermostat: missing"，但只有懂 MD 的人能告诉你"因为你在算热导率，
+# 所以这一条缺失让结论直接不可用"。
+#
+# 每条 when 条件全部满足才触发。未触发的条件不产生噪声。
+# =============================================================================
+
+version: "0.1.0"
+
+conditional_impacts:
+
+  # ---- 输运性质相关：恒温器是最大的隐形陷阱 ----
+  - field: thermostat
+    when: {heat_transport: true}
+    severity: high
+    impact: >
+      热输运计算中恒温器类型直接决定热流涨落谱。Berendsen 一类的弱耦合
+      恒温器会压制体系的长时涨落，使 Green-Kubo 的关联函数衰减过快，
+      κ 被系统性低估；文献报道不同恒温器之间的偏差可达 10-30%，
+      且方向可正可负。未报告恒温器 = 该 κ 值不可与其他文献横向比较。
+    action: "要求作者补充恒温器类型与耦合常数；或以 NVE 生产段复算。"
+
+  - field: heat_flux_method
+    when: {heat_transport: true}
+    severity: high
+    impact: >
+      Green-Kubo（平衡态、依赖关联函数收敛）、Direct NEMD（非平衡、依赖
+      梯度稳态）、RNEMD（依赖交换频率）三者的系统误差来源完全不同，
+      数值不可直接比较。跨方法引用 κ 值是本领域常见错误。
+    action: "明确方法类别；跨文献比较前先确认方法一致。"
+
+  - field: correlation_window
+    when: {heat_transport: true}
+    severity: high
+    impact: >
+      Green-Kubo 的 κ(t) 存在平台区，取值必须在平台内。取在未收敛区
+      会系统性低估，且这种低估在数值上表现为"看起来收敛得很平滑"，
+      极具迷惑性。只报单一 κ 数值而不给收敛证据，是本领域最普遍的
+      复现障碍。
+    action: "要求提供 κ(t) 累积曲线与多窗口一致性；用 src/convergence.py 核验。"
+
+  - field: temperature_bath
+    when: {heat_transport: true}
+    severity: medium
+    impact: >
+      NEMD 中 κ 应在线性响应区测量。ΔT 过大（例如数百 K）会进入非线性
+      区，此时得到的 κ 依赖于 ΔT 本身，失去材料常数的意义。
+      未报告冷热浴温度则无法判断是否在线性区。
+    action: "确认 ΔT 足够小（通常 ≤ 0.1×T_avg）；必要时做 ΔT 扫描验证线性。"
+
+  - field: system_size
+    when: {heat_transport: true}
+    severity: high
+    impact: >
+      热输运的有限尺寸效应远比体相性质严重：NEMD 得到的 κ 与盒子长度
+      近似成线性关系，必须做 L→∞ 外推才能与实验比较。只给一个体系
+      尺寸的 κ，原则上无法与实验值直接对照。
+    action: "至少两个尺寸做外推；报告外推截距与斜率。"
+
+  # ---- 体系构成相关 ----
+  - field: protonation_state
+    when: {protein_present: true}
+    severity: high
+    impact: >
+      组氨酸质子化态决定活性位点的氢键网络与净电荷。在金属酶、质子
+      传递、pH 依赖的结合体系中，质子化态错误会让结果从定性上就
+      不同（结合 vs 不结合），而非百分比偏差。
+    action: "用 PROPKA/H++ 复核 pKa；报告所选 tautomer 及依据。"
+
+  - field: ligand_parameters
+    when: {ligand_present: true}
+    severity: high
+    impact: >
+      配体电荷来源（AM1-BCC vs RESP）与力场版本（GAFF vs GAFF2）会
+      改变配体构象能与静电相互作用，对结合自由能的影响可达
+      1-2 kcal/mol 量级，足以翻转"有效/无效"的结论。
+    action: "报告电荷计算方法与力场版本；必要时做参数敏感性检验。"
+
+  - field: force_field
+    when: {protein_present: true, ligand_present: true}
+    severity: high
+    impact: >
+      蛋白-配体体系需同时说明蛋白力场与配体力场，以及两者如何耦合
+      （如 ff14SB + GAFF2）。只写"蛋白用 AMBER、配体用 GAFF"而未给
+      版本，是"看起来写了其实没写"的典型。
+    action: "要求完整力场字符串，含全部版本后缀。"
+
+  - field: water_model
+    when: {explicit_solvent: true}
+    severity: medium
+    impact: >
+      水模型影响溶剂密度、介电屏蔽与疏水效应强度。TIP3P 与 TIP4P/2005
+      给出的水密度极大值位置不同，对疏水结合与蛋白稳定性有可观影响。
+    action: "报告水模型；跨文献比较时确认水模型一致。"
+
+  - field: simulation_length
+    when: {protein_present: true}
+    severity: medium
+    impact: >
+      蛋白构象采样通常需要 μs 量级才收敛。单个 100 ns 轨迹用于构象
+      系综分析时，结论多半反映的是初始构象而非平衡系综。
+    action: "报告重复次数与收敛判据（如 RMSD 平台、聚类占比）。"
+
+  # ---- 通用方法学 ----
+  - field: dispersion_correction
+    when: {explicit_solvent: false}
+    severity: high
+    impact: >
+      无溶剂体系（真空、隐式溶剂、干态熔体）中，截断 LJ 而不做长程色散
+      校正会让密度与内能系统性偏低，且偏差随体系增大而累积，密度误差
+      会进一步传导到热输运与力学性质。对聚合物熔体、界面与自组装体系
+      影响尤为明显。
+    action: "启用 EnerPres 或等价校正；若刻意不做，需说明截断半径足够大并给出依据。"
+
+  - field: initial_structure
+    when: {}
+    severity: high
+    impact: >
+      初始结构来源（晶体 / 预测 / 自建）决定体系能否收敛到同一系综。
+      尤其是自建无规链体系，不同初始构象的松弛路径可能落入不同
+      局域极小，导致"同样方法不同结果"。
+    action: "报告来源与缺失残基处理；自建体系报告松弛流程与重复数。"
+
+# -----------------------------------------------------------------------------
+# 评分权重：用于把一堆 flag 汇总成一个可横向比较的数字
+# 说明：这是启发式权重，用于本工具内部的相对比较，不是绝对标准。
+# -----------------------------------------------------------------------------
+scoring:
+  base: 100
+  penalty:
+    missing_critical: 12
+    missing_important: 6
+    missing_contextual: 4
+    ambiguous: 5
+    consistency_violation: 8
+  grade_cutoffs:      # score >= threshold -> grade
+    A: 90
+    B: 75
+    C: 60
+    D: 0

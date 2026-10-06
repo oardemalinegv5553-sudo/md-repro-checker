@@ -1,0 +1,60 @@
+{
+  "_note": "人工标注的黄金标准。status 三态必须区分清楚：missing = 文献该写没写；not_applicable = 本文体系里不存在这个问题。二者混淆会制造假阳性，是早期版本最主要的错误来源。",
+  "_files": {
+    "v1": "examples/case-01/methods_v1_typical.txt",
+    "v2": "examples/case-01/methods_v2_complete.txt"
+  },
+
+  "v1": {
+    "fields": {
+      "force_field":            {"status": "present", "value": "GAFF2"},
+      "water_model":            {"status": "not_applicable"},
+      "thermostat":             {"status": "present", "value": {"type": "Berendsen"}},
+      "barostat":               {"status": "present", "value": {"type": "Parrinello-Rahman"}},
+      "ensemble":               {"status": "present", "value": "NPT"},
+      "timestep":               {"status": "present", "value": 2.0},
+      "electrostatics":         {"status": "present", "value": {"method": "PME"}},
+      "constraints":            {"status": "present", "value": "LINCS"},
+      "dispersion_correction":  {"status": "missing"},
+      "simulation_length":      {"status": "present", "value": {"length": 20.0, "unit": "ns"}},
+      "system_size":            {"status": "missing"},
+      "heat_flux_method":       {"status": "present", "value": "Direct NEMD"},
+      "temperature_bath":       {"status": "present", "value": {"hot_K": 350, "cold_K": 250}},
+      "correlation_window":     {"status": "missing"},
+      "software":               {"status": "present", "value": "GROMACS 2022.3"},
+      "initial_structure":      {"status": "present"},
+      "protonation_state":      {"status": "not_applicable"},
+      "ligand_parameters":      {"status": "not_applicable"}
+    },
+    "rules_expected": ["R-02", "R-03", "R-05", "R-08", "R-10", "R-11", "R-12"],
+    "rules_forbidden": ["R-01", "R-06", "R-07", "R-09"],
+    "_rules_note": "forbidden 列表专门用来抓假阳性：R-06 曾对无溶剂聚合物熔体误报水模型缺失，R-01 曾因系综取错位而误报。"
+  },
+
+  "v2": {
+    "fields": {
+      "force_field":            {"status": "present", "value": "GAFF2"},
+      "water_model":            {"status": "not_applicable"},
+      "thermostat":             {"status": "present", "value": {"type": "V-rescale", "coupling": "0.1"}},
+      "barostat":               {"status": "present", "value": {"type": "Parrinello-Rahman", "coupling": "2.0"}},
+      "ensemble":               {"status": "present", "value": "NPT"},
+      "timestep":               {"status": "present", "value": 2.0},
+      "electrostatics":         {"status": "present", "value": {"method": "PME", "rcoulomb_nm": 1.2}},
+      "constraints":            {"status": "present", "value": "LINCS"},
+      "dispersion_correction":  {"status": "present", "value": "EnerPres"},
+      "simulation_length":      {"status": "present", "value": {"length": 20.0, "unit": "ns", "replicas": 5}},
+      "system_size":            {"status": "present", "value": {"atoms": 61440, "box_nm": 8.0}},
+      "heat_flux_method":       {"status": "present", "value": "Direct NEMD"},
+      "temperature_bath":       {"status": "present", "value": {"hot_K": 315, "cold_K": 285}},
+      "correlation_window":     {"status": "present", "value": {"correlation_time": 2.0, "unit": "ns"}},
+      "software":               {"status": "present", "value": "GROMACS 2022.3"},
+      "initial_structure":      {"status": "present"},
+      "protonation_state":      {"status": "not_applicable"},
+      "ligand_parameters":      {"status": "not_applicable"}
+    },
+    "rules_expected": [],
+    "rules_forbidden": ["R-01", "R-02", "R-03", "R-04", "R-05", "R-06",
+                        "R-07", "R-08", "R-09", "R-10", "R-11"],
+    "_rules_note": "v2 是按可复现标准补全的版本，不应产生任何一致性冲突。这一条比 v1 的命中率更能说明工具的可用性，只会报警不会闭嘴的检查器没人会用。"
+  }
+}

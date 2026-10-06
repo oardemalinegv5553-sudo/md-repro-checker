@@ -1,0 +1,19 @@
+=== 合成示例，非任何真实论文 ===
+本文件为演示用构造文本，写法参照高分子热输运模拟文献的常见段落形态，
+不来自任何已发表或未发表的研究。文中的数值仅用于触发检查规则。
+
+Computational details
+
+All simulations were performed with GROMACS 2022.3. The polymer chains were
+described by the GAFF2 force field with partial charges derived from AM1-BCC.
+Initial configurations of the solvent-free polymer melt were generated with
+Packmol and relaxed through a protocol consisting of energy minimisation,
+500 ps of annealing under NVT, and 5 ns of NPT equilibration. Production runs
+were carried out in the NPT ensemble at 300 K and 1 bar using the
+Parrinello-Rahman barostat and the Berendsen thermostat. A time step of 2 fs
+was used, with bonds involving hydrogen constrained by the LINCS algorithm.
+Electrostatic interactions were treated using the particle-mesh Ewald method.
+The thermal conductivity was obtained from direct non-equilibrium molecular
+dynamics: the simulation cell was divided into slabs along the z axis, and a
+constant heat flux was imposed by velocity rescaling in the hot and cold slabs
+held at 350 K and 250 K, respectively. Each production run lasted 20 ns.

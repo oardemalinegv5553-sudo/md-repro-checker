@@ -1,0 +1,4 @@
+# 本项目的文件混用 CRLF 与 LF（README.md、schema/*.yaml、test_regressions.py 是 CRLF，
+# src/*.py、docs/proposal.md 是 LF），脚本一律以二进制方式读写以保留行尾。
+# 关掉一切行尾转换，让 checkout 出来的字节与提交时完全一致。
+* -text

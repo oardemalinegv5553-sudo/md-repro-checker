@@ -1,0 +1,34 @@
+=== 合成示例，非任何真实论文 ===
+与 methods_v1_typical.txt 为同一虚构研究，但按可复现标准补全。
+两版的 diff 即本工具希望推动的写作增量。
+
+Computational details
+
+All simulations were performed with GROMACS 2022.3. The polymer chains were
+described by the GAFF2 force field with partial charges derived from AM1-BCC
+(charge fitting performed with antechamber). Initial configurations of the
+solvent-free polymer melt were generated with Packmol: 64 chains of 30 repeat
+units were packed into a cubic box of 8.0 nm, giving 61,440 atoms. Each system
+was relaxed through energy minimisation, 500 ps of annealing under NVT, and
+5 ns of NPT equilibration. Production runs were carried out in the NPT
+ensemble at 300 K and 1 bar using the Parrinello-Rahman barostat with a
+coupling constant of tau_p = 2.0 ps and the V-rescale thermostat with
+tau_t = 0.1 ps. A time step of 2 fs was used, with bonds involving hydrogen
+constrained by the LINCS algorithm. Electrostatic interactions were treated
+using the particle-mesh Ewald method with a real-space cutoff of 1.2 nm and a
+Lennard-Jones cutoff of 1.2 nm; long-range dispersion corrections were applied
+to both energy and pressure (EnerPres).
+
+The thermal conductivity was obtained from direct non-equilibrium molecular
+dynamics. The simulation cell was divided into 40 slabs along the z axis, and a
+constant heat flux was imposed by velocity rescaling in the hot and cold slabs
+held at 315 K and 285 K, respectively (Delta T = 30 K, i.e. 10% of the mean
+temperature, verified to lie within the linear-response regime by a separate
+Delta T scan at 20 K and 40 K). The temperature profile was fitted over the
+central 60% of the cell to exclude thermostat-induced boundary artefacts.
+The thermal conductivity was evaluated from the imposed flux and the fitted
+gradient using a correlation window of 2 ns, discarding the first 5 ns of
+transient. Each production run lasted 20 ns and was repeated with 5 independent
+replicas initialised from different equilibrated configurations; the reported
+value is the mean over replicas and the uncertainty is the standard error
+across replicas.

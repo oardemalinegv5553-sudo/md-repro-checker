@@ -1,0 +1,307 @@
+# =============================================================================
+# md_method.yaml：MD 方法段的决定性字段 schema
+# -----------------------------------------------------------------------------
+# 这是本项目的核心资产：一份"哪些参数决定了 MD 结果能否复现"的领域知识清单。
+#
+# severity 分级（决定了"缺失"这件事有多严重）：
+#   critical    缺失将导致结果不可复现或不可比。必填。
+#   important   缺失显著影响可比性与可信度，尤其在做定量比较时。
+#   contextual  仅在特定方法/体系下必需（如 NPT 需要 barostat，
+#               热输运计算需要热流方法）。缺失时先判断场景，再判定严重度。
+#
+# why 字段是本 schema 的灵魂：写的是"这个参数没写，会让别人的结果偏到哪里去"。
+#   人工标注和 LLM 抽取都靠它对齐。
+#
+# why 与 state_rule 必须分开写：
+#   why         为什么这个字段重要（纯理由）。**会在任意状态的块里打印**，
+#               所以里面不能出现"这算 ambiguity / 这算缺失"这类话。
+#   state_rule  什么情况判哪一态（机器用，喂给 LLM；不随 why 打印）。
+#   为什么必须分开：检查单会把 why 原样印在【字段缺失】或【字段歧义】块里。
+#   所以 why 里一旦写进状态规则（如 system_size 的"只给盒子尺寸不给原子数，
+#   属 ambiguity"），那句话就会被印在【未报告 体系规模】下面：判定是对的，
+#   读起来却像工具在自我否定。状态规则由抽取器执行，why 只讲理由。
+# =============================================================================
+
+version: "0.1.0"
+schema_name: md_method
+
+# -----------------------------------------------------------------------------
+# 分组：核心字段（任何 MD 体系都适用）
+# -----------------------------------------------------------------------------
+fields:
+
+  - key: software
+    name_cn: 模拟软件与版本
+    severity: contextual
+    type: string
+    examples: ["GROMACS 2022.3", "AMBER 20", "OpenMM 8.0", "LAMMPS 2023"]
+    why: >
+      同一输入在不同软件/版本下结果会有差异（PME 实现、默认参数、约束算法
+      都改过）。只写软件名不写版本，属于"看起来写了其实没写"。
+
+  - key: force_field
+    name_cn: 力场及版本
+    severity: critical
+    type: string
+    examples: ["AMBER99SB-ILDN", "CHARMM36m", "OPLS-AA", "COMPASS III", "PCFF+"]
+    why: >
+      MD 复现失败的头号原因。AMBER99SB 与 AMBER99SB-ILDN 只差四个侧链
+      二面角，但蛋白动力学与热力学量可差到 10% 量级；CHARMM36 与
+      CHARMM36m 对无序蛋白的构象系综影响更大。
+    state_rule: 只写 "AMBER" 或 "CHARMM" 而未给版本 → ambiguity，而非 missing
+    disambiguation:
+      - pattern: 'AMBER\s*(ff)?\s*99\w*'
+        note: "需确认是否含 -ILDN / -NMR / -Φ 等后缀"
+      - pattern: 'CHARMM\s*3[0-9]'
+        note: "需确认是否为 36m / 36 / 22 等具体版本"
+
+  - key: water_model
+    name_cn: 水模型
+    severity: critical
+    type: string
+    examples: ["TIP3P", "TIP4P/2005", "TIP4P/ice", "SPC/E", "OPC", "TIP5P"]
+    why: >
+      水模型直接改变化学势、密度、扩散系数与介电行为。TIP3P 与
+      TIP4P/2005 给出的水的密度极大值位置不同，蛋白-配体结合自由能
+      差异可达 1 kcal/mol 量级。
+    state_rule: 显式溶剂体系未写水模型 → critical 缺失
+
+  - key: protonation_state
+    name_cn: 可滴定残基的质子化态
+    severity: critical
+    type: object
+    examples: ["HID/HIE/HIP 命名约定", "Asp/Glu 是否质子化", "Cys 是否成二硫键"]
+    why: >
+      组氨酸有三个质子化态，命名约定（HID/HIE/HIP vs HSD/HSE/HSP）
+      各家不同。质子化态决定氢键网络与活性位点电荷，是"文献写了
+      但没写清"的典型。缺失时结果差异落在定性层面（结合 vs 不结合），
+      不只是数值偏差。
+
+  - key: ligand_parameters
+    name_cn: 配体/非标准残基的参数化方法
+    severity: contextual
+    type: object
+    examples: ["GAFF2 + AM1-BCC", "GAFF + RESP", "CGenFF", "OpenFF"]
+    why: >
+      仅在体系含配体/非标准残基时必需。电荷来源（AM1-BCC vs RESP）
+      对小分子水合自由能影响显著；GAFF 与 GAFF2 的二面角不同。
+    state_rule: 写「配体用 GAFF 处理」而未写电荷方法 → ambiguous
+
+  - key: electrostatics
+    name_cn: 静电处理与截断
+    severity: critical
+    type: object
+    examples: ["PME, rcoulomb=1.0 nm", "PME, rcoulomb=1.2 nm", "RF, rc=1.4 nm"]
+    why: >
+      截断半径从 1.0 nm 改到 1.2 nm 会让能量与密度都变。用 Ewald/PME
+      还是 reaction-field 是两套完全不同的物理近似，不可直接比较。
+      写了 "PME" 但没给 rcoulomb，属**规则层**的 important 问题。
+      注意这不是说字段状态该判 missing：方法确实报告了静电方法，
+      该字段仍是 present，缺的那个子参数由规则 R-10 指出。
+      「字段状态」与「规则严重度」是两件事，此处措辞针对后者。
+      两批独立标注员都曾把这句读成字段状态，这一区分必须写明。
+
+  - key: constraints
+    name_cn: 键长约束算法
+    severity: critical
+    type: string
+    examples: ["LINCS", "SHAKE", "SETTLE (水)", "h-bonds only"]
+    why: >
+      约束哪些键、用什么算法，决定了可用的时间步，也影响体系的
+      振动谱与动力学。约束氢键与不约束的结果在 2 fs 时间步下差异明显。
+
+  - key: timestep
+    name_cn: 时间步
+    severity: critical
+    type: float
+    unit: fs
+    examples: [1.0, 2.0, 4.0]
+    why: >
+      4 fs 通常需要氢质量重分配（H-mass repartitioning），若文献写
+      4 fs 却未提该技术，是内部不一致，需标 flag（见 validate 规则 R-04）。
+
+  - key: thermostat
+    name_cn: 恒温器类型与耦合常数
+    severity: critical
+    type: object
+    examples: ["V-rescale, tau_t=0.1 ps", "Nose-Hoover, tau=1 ps", "Langevin, gamma=1 ps^-1"]
+    why: >
+      对平衡性质通常影响有限，但对输运性质（扩散系数、热导率、
+      粘度）影响极大：Berendsen 恒温器会压制涨落，导致 Green-Kubo
+      类计算系统性偏差。弱耦合与强耦合在热输运中可造成 10-30% 偏差。
+
+  - key: barostat
+    name_cn: 恒压器类型与耦合常数
+    severity: contextual
+    type: object
+    examples: ["Parrinello-Rahman, tau_p=2 ps", "C-rescale", "Berendsen"]
+    why: >
+      Berendsen 恒压器不产生正确的系综涨落，用于采集体积/密度时需警惕；
+      不同恒压器的体积涨落行为不同，不能默认。
+    state_rule: 声明了 NPT 系综却未给恒压器 → critical 缺失（体系状态未定义）
+
+  - key: ensemble
+    name_cn: 系综
+    severity: critical
+    type: string
+    enum: ["NVE", "NVT", "NPT", "NPAT", "NPH", "μVT"]
+    why: >
+      系综决定哪些热力学量是守恒的、哪些是由浴固定的。NVT 与 NPT
+      下算出的热导率、密度、涨落量都不同，不可混用。
+
+  - key: simulation_length
+    name_cn: 模拟时长与重复次数
+    severity: critical
+    type: object
+    examples: ["3 × 200 ns", "1 × 1 μs", "5 replicas × 100 ns"]
+    why: >
+      "时长"与"重复次数"必须成对出现才有统计意义。单个 100 ns 与
+      3 × 100 ns 在采样充分性上不是一回事。未写重复次数时，任何
+      定量结论都无法判断是否落在统计误差内。
+
+  - key: system_size
+    name_cn: 体系规模
+    severity: important
+    type: object
+    examples: ["~52,000 atoms, 6.5 nm cubic box", "DP=10, 200 chains"]
+    why: >
+      对体相性质，有限尺寸效应可通过外推修正；对热输运，
+      有限尺寸效应尤其严重（NEMD 的 κ 随盒子长度线性变化，
+      需做 L → ∞ 外推）。
+    state_rule: 只给盒子尺寸、不给原子数 → ambiguous
+
+  - key: initial_structure
+    name_cn: 初始结构来源与缺失部分处理
+    severity: critical
+    type: object
+    examples: ["PDB 1ABC", "AlphaFold2 预测", "自建无规链", "缺失 loop 用 MODELLER 补齐"]
+    why: >
+      初始构象决定能否收敛到同一系综。来源（晶体结构 / 预测 / 自建）
+      与缺失残基、缺失原子的处理方式必须写明，否则无法判断两条
+      轨迹是否从同一状态出发。
+
+  - key: dispersion_correction
+    name_cn: 长程色散校正
+    severity: important
+    type: string
+    examples: ["EnerPres", "force-switch", "none"]
+    why: >
+      截断 LJ 而不做长程校正，会让密度与内能系统性偏低。
+      对聚合物熔体、界面体系影响尤其明显。
+
+# -----------------------------------------------------------------------------
+# 分组：热输运扩展（仅当文献做热导率/热输运计算时启用）
+# -----------------------------------------------------------------------------
+heat_transport_extension:
+
+  - key: heat_flux_method
+    name_cn: 热流计算方法
+    severity: contextual
+    type: string
+    enum: ["Green-Kubo", "Direct NEMD", "RNEMD (Muller-Plathe)", "EMD"]
+    why: >
+      不同方法给出的 κ 不可直接比较：Green-Kubo 依赖关联函数的
+      统计收敛，NEMD 依赖梯度建立的稳态与否，RNEMD 依赖交换频率。
+      方法不同，系统误差方向也不同。
+
+  - key: temperature_bath
+    name_cn: 冷热浴温度与梯度
+    severity: contextual
+    type: object
+    examples: ["350 K / 250 K, ΔT=100 K"]
+    why: >
+      NEMD 中 κ 应在线性响应区测量。ΔT 过大将进入非线性区，
+      得到的 κ 依赖 ΔT 本身，失去物理意义。只给方法不给温度设置，
+      无法判断是否在线性区。
+
+  - key: correlation_window
+    name_cn: 统计窗口与关联时间
+    severity: contextual
+    type: object
+    examples: ["correlation time 20 ps, 5 independent windows"]
+    why: >
+      Green-Kubo 的 κ(t) 必须在平台上取值。取在未收敛区会系统性
+      低估；只报一个 κ 数值而不给收敛证据，是本领域最普遍的
+      复现障碍之一（见 src/convergence.py 的判据设计）。
+
+# =============================================================================
+# 跨字段一致性规则：只读摘要，**不参与执行**
+# -----------------------------------------------------------------------------
+# 这里写的是给人看的规则说明。真正执行的是 `src/validate.py` 的 `RULES` 表，
+# 它把"触发条件"写成 Python 函数，因为多数条件读的是字典字段的子键
+# （如 barostat.coupling）或上下文标志（如 context.heat_transport），
+# 不是能用一行表达式表达的。
+#
+# **改这里的任何一行都不会改变工具的行为。** 改规则请改 validate.py，
+# 然后跑 eval/real/test_regressions.py：其中一组断言逐条比对
+# 本文件与 RULES 的 id、severity 与 message，不一致即失败。
+# 这条断言存在的理由：本块是死文本，没有任何机制保证它与实现同步
+# （曾出现 9/12 条的文案与实现不同，when/require 里引用过 16 个
+# schema 中并不存在的标识符，例如 solvent、replica_count、barostat_coupling）。
+# 一个"看着像可执行声明、实际是死文本"的知识块，正是本项目要抓的
+# 那一类静默失效，它不该出现在本项目自己的 schema 里。
+#
+# when/require 的写法：context 前缀指抽取层产出的场景标志（见 extract.py
+# 的 detect_context），其余为 schema 字段；点号表示字典字段的子键。
+# =============================================================================
+consistency_rules:
+  - id: R-01
+    severity: critical
+    when: "context.ensemble == NPT"
+    require: "barostat（字段有值）"
+    message: "声明 NPT 系综但未报告恒压器：体系状态未定义，无法复现"
+  - id: R-02
+    severity: important
+    when: "context.ensemble == NPT，且 barostat 为字典"
+    require: "barostat.coupling"
+    message: "报告了恒压器类型但未给耦合常数 tau_p：压力耦合强度不可复现"
+  - id: R-03
+    severity: critical
+    when: "context.heat_transport == true"
+    require: "correlation_window（字段有值）"
+    message: "热输运计算未报告统计窗口/关联时间：无法判断 κ 是否取自平台区"
+  - id: R-04
+    severity: important
+    when: "timestep >= 4.0"
+    require: "context.h_mass_repartitioning == true"
+    message: "时间步 ≥ 4 fs 但未提及氢质量重分配，内部不一致，需人工确认"
+  - id: R-05
+    severity: important
+    when: "context.heat_transport == true"
+    require: "system_size（字段有值）"
+    message: "热输运计算未报告体系尺寸：无法评估有限尺寸效应"
+  - id: R-06
+    severity: critical
+    when: "context.explicit_solvent == true"
+    require: "water_model（字段有值）"
+    message: "显式溶剂体系未报告水模型"
+  - id: R-07
+    severity: critical
+    when: "context.ligand_present == true"
+    require: "ligand_parameters（字段有值）"
+    message: "体系含配体但未报告参数化方法与电荷来源"
+  - id: R-08
+    severity: important
+    when: "simulation_length 为字典"
+    require: "simulation_length.replicas"
+    message: "报告了模拟时长但未说明重复次数：统计误差无法评估"
+  - id: R-09
+    severity: critical
+    when: "context.protein_present == true"
+    require: "protonation_state（字段有值）"
+    message: "含蛋白体系未说明可滴定残基（尤其 HIS）的质子化态"
+  - id: R-10
+    severity: important
+    when: "electrostatics.method == PME"
+    require: "electrostatics.rcoulomb_nm"
+    message: "使用 PME 但未给出实空间截断半径 rcoulomb"
+  - id: R-11
+    severity: important
+    when: "context.heat_transport == true，且 temperature_bath 同时给出 hot_K 与 cold_K"
+    require: "(hot_K - cold_K) / ((hot_K + cold_K) / 2) <= 0.10"
+    message: "NEMD 冷热浴温差相对平均温度超过 10%：可能已偏离线性响应区，此时 κ 依赖于 ΔT 本身，不再是材料常数"
+  - id: R-12
+    severity: important
+    when: "thermostat 为字典，且给了 type"
+    require: "thermostat.coupling"
+    message: "报告了恒温器类型但未给耦合常数 tau_t：恒温强度不可复现，对扩散/热导/粘度等输运性质可造成 10-30% 偏差"
