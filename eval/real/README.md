@@ -14,12 +14,14 @@
 `sections/` 里是**已发表论文的正文片段**，版权归原作者所有。
 它们只用于本地评估工具质量，**绝不进入追光计划的提交材料**。
 
-打包提交时**必须排除下面三个目录**（注意：不是排除整个 `eval/real/`，
+打包提交时**必须排除下面这些目录**（注意：不是排除整个 `eval/real/`，
 这一层里的 `.py` 脚本是可分发的，见文末表格）：
 
 ```bash
-# 打包：只排除含正文的三个目录与缓存
+# 打包：版本库与生成物不进提交，另排除含正文的三个目录与缓存
 zip -r md-repro-checker.zip md-repro-checker \
+    -x 'md-repro-checker/.git/*' \
+    -x 'md-repro-checker/out/*' \
     -x 'md-repro-checker/eval/real/sections/*' \
     -x 'md-repro-checker/eval/real/_label_work/*' \
     -x 'md-repro-checker/eval/real/_scratch/*' \
@@ -28,8 +30,11 @@ zip -r md-repro-checker.zip md-repro-checker \
 
 # 自查：下面这条必须**没有任何输出**。打包错误是静默的，
 # zip 不会告诉你它把 121 MB 的论文全文打进去了。
-unzip -l md-repro-checker.zip | grep -E 'sections/|_label_work/|_scratch/'
+unzip -l md-repro-checker.zip | grep -E '\.git/|/out/|sections/|_label_work/|_scratch/|_tmp/|__pycache__'
 ```
+
+这份排除表与包根目录的 `.gitignore` 是同一份清单，两处要同步改。
+按它打出来的包正好等于 `git ls-files` 的 54 个文件。
 
 > 早先这里写的是 `-x 'md-repro-checker/eval/real/*'`（排除整个目录）。
 > 那与下方表格、以及主 README 中"`test_regressions.py` 可独立运行"
