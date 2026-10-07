@@ -372,10 +372,12 @@ def main(argv=None) -> int:
     d = json.load(io.open(ADJ, encoding="utf-8"))
     before = {k: v for k, v in d.items() if k != "_note"}
 
-    # 批量退役的键不参与写回，也不参与冲突检查，它们即将被撤下，
-    # 此刻文件里是什么值都不影响结果。
-    bulk = set(RETIRED_BULK)
-    effective = {k: v for k, v in VERDICTS.items() if k not in bulk}
+    # 退役的键不参与写回，也不参与冲突检查，它们即将被撤下，
+    # 此刻文件里是什么值都不影响结果。两张表都要排：只排 BULK 的话，
+    # 逐条退役却仍留在 VERDICTS 里的那一条会被当成"新增"写回去，
+    # 刚撤下的裁定又挂上了。
+    dead = set(RETIRED) | set(RETIRED_BULK)
+    effective = {k: v for k, v in VERDICTS.items() if k not in dead}
 
     add, clash = {}, []
     for key, (verdict, _why) in effective.items():
