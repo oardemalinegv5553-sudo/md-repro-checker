@@ -1,8 +1,7 @@
 # MD 方法段可复现性检查器：Demo 说明
 
-> 追光计划第二期 · 线上实习申请材料
 > 代码与数据：`md-repro-checker/`
-> 一条命令复现全部结果：`python run_demo.py`
+
 
 ---
 

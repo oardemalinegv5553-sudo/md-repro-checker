@@ -4,8 +4,6 @@
 生成带来源标注的输入文件，判定模拟结果是否可信，并回答
 **一组文献报告的同一个量彼此是否可比**。
 
-> 追光计划第二期 · 线上实习申请 Demo
-> 全部结果可一条命令复现：`python run_demo.py`
 
 ---
 
@@ -39,8 +37,6 @@ $ python -m src.cli examples/case-01/methods_v2_complete.txt
 可复现性评分  : 100 / 100   [等级 A]
 ```
 
-**一个只会报警的检查器没有价值。** 工具必须能在方法段达标时明确闭嘴，
-否则使用者无法用它判断"改好了没有"。
 
 ---
 
@@ -92,7 +88,7 @@ schema/sensitivity.yaml    在"这个具体场景下"，缺失会让结果偏多
 ## 快速开始
 
 ```bash
-pip install pyyaml          # 核心只依赖这一个包
+pip install pyyaml          # 核心依赖这个包
 
 python run_demo.py          # 跑完全部演示，产出写入 examples/case-01/expected/
 
@@ -160,7 +156,7 @@ python eval/real/test_regressions.py             # 289 条回归断言，夹具�
 
 ### LAMMPS 生成器的四条硬规则
 
-LAMMPS 与 GROMACS 的差别不在语法，在于**它不会替你兜底**。
+LAMMPS 与 GROMACS 的差别不在语法，在于某些特殊情况。
 以下四条都是"写错了不报错、只是数不对"的地方，生成器因此不肯默认：
 
 | 规则 | 理由 |
@@ -168,25 +164,21 @@ LAMMPS 与 GROMACS 的差别不在语法，在于**它不会替你兜底**。
 | 拒绝伪造力场参数 | LAMMPS 不读力场库。生成 `include TODO.forcefield` 而不是编一套 `pair_coeff`，伪造的力场跑得起来，但跑的不是原来那个体系 |
 | PME 必须成对出现 | `pair_style lj/cut/coul/long` 与 `kspace_style pppm` 缺一不可。只写 `coul/cut` 且不给 kspace 时 LAMMPS 不报错，只是静默退化为纯截断库仑 |
 | `special_bonds` 挂在力场上 | 1-4 非键缩放是力场定义的一部分，不是可以各阶段各写各的运行参数。挂在力场上，从源头消除"平衡段与生产段用的不是同一个体系" |
-| `pair_modify mix` 挂在力场上 | LJ 交叉项混合规则同样由力场族决定，而且**有默认值**：默认 `geometric`（σ 取几何平均），AMBER/GAFF/CHARMM 要的却是 Lorentz-Berthelot（σ 取算术平均），COMPASS/PCFF 要六次方规则，而 **OPLS-AA 用的恰好就是几何平均**。于是同一个"漏写 mix"的动作，对哪一族有害取决于力场族——判据不能按"这一行在不在"来定。漏写不报错、不警告，只是所有 I≠J 交叉对的 σ 系统性偏移 |
+| `pair_modify mix` 挂在力场上 | LJ 交叉项混合规则同样由力场族决定，而且**有默认值**：默认 `geometric`（σ 取几何平均），AMBER/GAFF/CHARMM 要的却是 Lorentz-Berthelot（σ 取算术平均），COMPASS/PCFF 要六次方规则，而 OPLS-AA 用的是几何平均。于是同一个"漏写 mix"的动作，对哪一族有害取决于力场族——判据不能按"这一行在不在"来定。漏写不报错、不警告，只是所有 I≠J 交叉对的 σ 系统性偏移 |
 
-最后一条值得单独说明，因为它是本项目"静默失效"论点的最纯粹样本：
+最后一条值得单独说明，因为它是本项目静默失效论点的最纯粹样本：
 LAMMPS 源码 `src/pair.cpp` 的 `mix_energy()` 在 `geometric` 与 `arithmetic`
 下**返回同一个值** `sqrt(eps1*eps2)`，只有 `mix_distance()` 不同，
-**ε 完全不受影响，只有 σ 变**。于是能量项上看不出任何异常，
+ε 完全不受影响，只有 σ 变。于是能量项上看不出任何异常，
 而交叉对的作用距离已经偏了。
 
 这个偏差的大小不用测也能定：由 AM-GM 不等式，算术平均恒 ≥ 几何平均，
 两者之差随 **σ_i 与 σ_j 的差距**单调增大，所以轻原子与重原子配对时最明显，
 同类原子之间则完全无差别（此时两规则给出同一个 σ）。
-换句话说，**错得最厉害的地方恰好是最不容易被注意到的地方**。
 
 日志里 LAMMPS 会打印 `Generated N of M mixed pair_coeff terms from X mixing rule`，
-这是自查实际生效规则的唯一线索，但前提是你知道要去看。
+这说明自查实际生效。
 
-`DREIDING` **刻意不在映射表里**：它的混合规则未能坐实，与其猜一个值写进去，
-不如落到 TODO 分支。这与"拒绝伪造力场参数"是同一条原则，
-**不确定时留空比填错更安全**，因为填错的值不会被看见。
 
 热输运段另外处理三个反直觉点：
 
@@ -202,7 +194,7 @@ LAMMPS 源码 `src/pair.cpp` 的 `mix_energy()` 在 `geometric` 与 `arithmetic`
    手册要求除以"包含该 group 原子的体积"。group 是中央切片时用整盒体积
    会算错，且不报错。
 
-这些不是代码风格问题，每条都对应一个人眼容易漏掉、而检查器能稳定发现的
+这些每条都对应一个人眼容易漏掉、而检查器能稳定发现的
 静默错误。`check_lammps()` 因此不只校验命令名与重复 ID，还专门检测
 "跑得完但没意义"的脚本。
 
@@ -216,7 +208,7 @@ LAMMPS 源码 `src/pair.cpp` 的 `mix_energy()` 在 `geometric` 与 `arithmetic`
 `fix nvt` 也没拿到 `fix npt`，生成出一份空转脚本。**这类错误靠读代码
 很难发现，靠一条检查规则却很容易。**
 
-进**警告**的（能跑，但可能不是你想要的那个物理）：
+进**警告**的（能跑，但可能不是想要的）：
 
 - **有 `lj/cut` 系 `pair_style` 却没有任何 `pair_modify ... mix`**，
   见上文混合规则一节。它只警告不报错，因为无法从脚本反推力场族，
